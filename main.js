@@ -26,23 +26,31 @@ const main2 = () => {
         res.on("data", chunk => (data += chunk));
         res.on("end", () => {
             const $ = cheerio.load(data);
+            $('#bannercontainer').remove()
+            $('#enlace_proximos').remove()
 
-            //const children = $('#maincontainer').children()[1]
-            //const foo = $(".equipo_proximo", "children")
-            //console.log(children)
-            const ch = $('#maincontainer').children()
-            const a = $(ch).slice(1)
-            const partidos = $(a).map(function(i, el) {
-                    const equipos = $(".equipo_proximo", el).map(function(i, el) {
-                        const equipo = $(el).text()
-                        console.log(i, equipo)
-                        return el
+            let partidos = $('#maincontainer').children()
+            for (let i = 0; i < partidos.length; i++) {
+                const partido = partidos[i];
+                const equipos = $(".equipo_proximo", partido)
+                const info = $(".info_proximo", partido)
 
-                    })
 
-                    //return $(this).text();
-                }).get()
-                //console.log(partidos)
+                const local = $(equipos[0]).text().trim()
+                const visitante = $(equipos[1]).text().trim()
+                const descripcion = $(".descripcion_proximo", info).text().trim()
+                const fecha = $(".fecha_proximo", info).text().trim()
+                const hora = $(".hora_proximo", info).text().trim()
+                const faltan = 22 // Dummy
+
+                console.log(descripcion)
+                console.log(`${local} vs ${visitante}`)
+                console.log(`Fecha: ${fecha}`)
+                console.log(`Horario: ${hora}`)
+                console.log(`Faltan: ${faltan} Dias`)
+                    //console.log(local, visitante, descripcion, fecha, hora)
+                console.log("--------------------------------")
+            }
         });
     });
 };

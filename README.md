@@ -1,2 +1,9 @@
-# aquehorajuegaboca-cli
-⚽ A Qué Hora Juega Boca CLI
+# aQueHoraJuegaBoca-cli
+
+> ⚽ A Qué Hora Juega Boca CLI
+
+# Usage
+```
+$ boca
+
+$ boca --proximos
