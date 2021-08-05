@@ -2,7 +2,7 @@
   "name": "aquehorajuegaboca-cli",
   "version": "0.0.1",
   "bin": {
-    "aquehorajugaboca": "cli.js"
+    "aquehorajuegaboca": "cli.js"
   },
   "scripts": {
     "start": "node cli.js"
