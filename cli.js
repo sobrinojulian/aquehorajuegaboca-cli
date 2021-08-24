@@ -8,25 +8,21 @@ const getPartidosDivs = $ => {
   $('#enlace_proximos').remove()
   return $('#maincontainer').children()
 }
-const parsePartido = ($, partido) => {
+
+const parse = ($, partido) => {
   const equipos = $('.equipo_proximo', partido)
   const info = $('.info_proximo', partido)
-  return {
-    local: $(equipos[0]).text().trim(),
-    visitante: $(equipos[1]).text().trim(),
-    descripcion: $('.descripcion_proximo', info).text().trim(),
-    fecha: $('.fecha_proximo', info).text().trim(),
-    hora: $('.hora_proximo', info).text().trim()
-  }
-}
 
-const toString = partido => {
+  const local = $(equipos[0]).text().trim()
+  const visitante = $(equipos[1]).text().trim()
+  const descripcion = $('.descripcion_proximo', info).text().trim()
+  const fecha = $('.fecha_proximo', info).text().trim()
+  const hora = $('.hora_proximo', info).text().trim()
+
+  const ddmm = fecha.split('/').slice(0, 2).join('/')
   return [
-    partido.descripcion,
-   `${partido.local} vs ${partido.visitante}`,
-   `Fecha: ${partido.fecha}`,
-   `Horario: ${partido.hora}`,
-   '--------------------------------'].join('\n')
+    `${ddmm} (${hora}) | ${descripcion}`,
+    `${local} vs ${visitante}\n`].join('\n')
 }
 
 const main = async () => {
@@ -34,8 +30,8 @@ const main = async () => {
   const html = await response.text()
   const $ = cheerio.load(html)
   const divs = getPartidosDivs($)
-  for (const p of divs) {
-    console.log(toString(parsePartido($, p)))
+  for (const partido of divs) {
+    console.log(parse($, partido))
   }
 }
 
