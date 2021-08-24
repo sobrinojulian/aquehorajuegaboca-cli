@@ -1,6 +1,7 @@
 {
   "name": "aquehorajuegaboca-cli",
   "version": "0.0.1",
+  "type": "module",
   "bin": {
     "aquehorajuegaboca": "cli.js"
   },
@@ -8,6 +9,7 @@
     "start": "node cli.js"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3"
+    "cheerio": "^1.0.0-rc.3",
+    "node-fetch": "^2.6.1"
   }
 }
