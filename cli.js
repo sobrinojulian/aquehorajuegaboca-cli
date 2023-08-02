@@ -1,38 +1,53 @@
 #!/usr/bin/env node
 
-import fetch from 'node-fetch'
-import cheerio from 'cheerio'
-
-const getPartidosDivs = $ => {
-  $('#bannercontainer').remove()
-  $('#enlace_proximos').remove()
-  return $('#maincontainer').children()
-}
-
-const parse = ($, partido) => {
-  const equipos = $('.equipo_proximo', partido)
-  const info = $('.info_proximo', partido)
-
-  const local = $(equipos[0]).text().trim()
-  const visitante = $(equipos[1]).text().trim()
-  const descripcion = $('.descripcion_proximo', info).text().trim()
-  const fecha = $('.fecha_proximo', info).text().trim()
-  const hora = $('.hora_proximo', info).text().trim()
-
-  const ddmm = fecha.split('/').slice(0, 2).join('/')
-  return [
-    `${ddmm} (${hora}) | ${descripcion}`,
-    `${local} vs ${visitante}\n`].join('\n')
-}
+import { load } from 'cheerio'
 
 const main = async () => {
-  const response = await fetch('http://www.aquehorajuegaboca.com.ar/proximos')
+  const url = 'https://aquehorajuega.co/equipos/a-que-hora-juega-boca-juniors/'
+  const response = await fetch(url)
   const html = await response.text()
-  const $ = cheerio.load(html)
-  const divs = getPartidosDivs($)
-  for (const partido of divs) {
-    console.log(parse($, partido))
+  const $ = load(html)
+  const divs = getEventsDivs($)
+  for (const event of divs) {
+    const data = parse($, event)
+    const formattedEvent = format(data)
+    console.log(formattedEvent)
   }
+}
+
+const getEventsDivs = ($) => {
+  return $('[itemprop="startDate"]')
+    .map((_, el) => $(el).parent().parent())
+    .get()
+}
+
+const parse = ($, event) => {
+  const date = $('[itemprop="startDate"]', event).text().split('\n')[1].trim().split('  ').join(' ')
+  const city = $('[itemprop="address"]', event).text().trim()
+  const stadium = $('[itemprop="name"]', event).text().trim().split('\n')[0]
+  const match = $('.row[itemprop="name"]', event).attr('content').replace('Vs.', 'vs')
+  const tournament = $('span[itemprop="description"]', event).text().trim().replace('Torneo: ', '')
+
+  return {
+    date,
+    city,
+    stadium,
+    match,
+    tournament,
+  }
+}
+
+const format = (data) => {
+  const { date, city, stadium, match, tournament } = data
+
+  // prettier-ignore
+  return [
+    `🗓️  ${date}`,
+    `⚽️ ${match}`,
+    `🏟️  ${stadium} (${city})`,
+    `🏆 ${tournament}`,
+    '',
+  ].join('\n');
 }
 
 main()

@@ -1,6 +1,6 @@
 {
   "name": "aquehorajuegaboca-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "bin": {
     "aquehorajuegaboca": "cli.js"
@@ -9,14 +9,11 @@
     "start": "node cli.js"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "node-fetch": "^2.6.1"
+    "cheerio": "^1.0.0-rc.12"
   },
-  "devDependencies": {
-    "eslint": "^7.32.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.24.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0"
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true
   }
 }
