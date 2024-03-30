@@ -19,7 +19,16 @@ async function fetchData() {
     // Extract the desired data from the page object
     const desiredData = pageObject.page.content.fixtures.events
 
-    console.log(desiredData)
+    //
+    const date = desiredData[0].date.slice(0, -7)
+    const when = desiredData[0].status.detail.slice(0, -4)
+    const versus = desiredData[0].teams[0].shortDisplayName
+    const isLocal = ''
+    const time = ''
+    const league = desiredData[0].league
+    const where = `${desiredData[0].venue.fullName} (${desiredData[0].venue.address.country})`
+    console.log(desiredData[0])
+    console.log(`${when}, ${versus}, ${where}, ${league}`)
   } catch (error) {
     console.error('Error fetching data:', error)
   }
