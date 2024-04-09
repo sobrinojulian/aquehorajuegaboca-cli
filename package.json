@@ -1,19 +1,15 @@
 {
-  "name": "aquehorajuegaboca-cli",
-  "version": "0.0.2",
+  "private": true,
   "type": "module",
   "bin": {
     "aquehorajuegaboca": "cli.js"
   },
   "scripts": {
-    "start": "node cli.js"
+    "start": "node cli.js | less"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12"
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": false,
-    "singleQuote": true
+    "cheerio": "^1.0.0-rc.12",
+    "moment": "^2.30.1",
+    "table": "^6.8.2"
   }
 }
