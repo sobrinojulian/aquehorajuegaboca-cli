@@ -1,67 +1,40 @@
-import { load } from 'cheerio';
 import moment from 'moment';
 import { table } from 'table';
 
+const URL = 'https://boca.sobrinojulian.workers.dev/'
+
+const HEADER_ROW = ['Fecha', 'Hora', 'Local', 'Visitante', 'Competencia']
+
+const DATE_FORMAT = 'DD/MM';
+const TIME_FORMAT = 'HH:mm';
+
+const LEAGUE_MAPPINGS = {
+  'CONMEBOL Sudamericana': 'Sudamericana',
+  'Argentine Copa de la Liga Profesional': 'Copa Argentina',
+  'Liga Profesional de Argentina': 'Liga Profesional',
+};
+
 async function fetchData() {
-  try {
-    const response = await fetch('https://www.espn.com.ar/futbol/equipo/calendario?id=5');
-    const html = await response.text();
-    const $ = load(html);
+  const response = await fetch(URL);
+  const matches = await response.json();
 
-    // Extract the script content
-    const scriptContent = $('script')
-      .filter(function () {
-        return $(this).html().includes('__espnfitt__');
-      })
-      .html();
+  const formattedMatches = matches.map(match => formatMatch(match));
+  const tableData = [HEADER_ROW, ...formattedMatches];
+  console.log(table(tableData));
+}
 
-    // Extract the page object from the script content
-    const pageObject = JSON.parse(scriptContent.match(/window\['__espnfitt__'\]\s*=\s*({.*?});/)[1]);
+function formatMatch(match) {
+  const { date, league, teams } = match;
 
-    // Extract the desired data from the page object
-    const desiredData = pageObject.page.content.fixtures.events;
+  const formattedDate = moment(date).format(DATE_FORMAT);
+  const formattedTime = moment(date).format(TIME_FORMAT);
 
-    // Mapping of original league names to simplified names
-    const filter = {
-      'CONMEBOL Sudamericana': 'Sudamericana',
-      'Argentine Copa de la Liga Profesional': 'Copa Argentina',
-      'Liga Profesional de Argentina': 'Liga Profesional',
-    };
+  const home = teams.find(team => team.isHome).shortDisplayName;
+  const away = teams.find(team => !team.isHome).shortDisplayName;
 
-    let data = [];
-    // breaks table
-    // data.push(['🏆 Liga', '🗓️ Fecha', '⌚ Hora', '⚽ Partido', '🏟️ Locacion']);
-    data.push(['Liga', 'Fecha', 'Hora', 'Partido', 'Locacion']);
-    desiredData.forEach((match) => {
-      const date = moment(match.date).format('DD/MM');
-      const time = moment(match.date).format('HH:mm');
+  const formattedLeague = LEAGUE_MAPPINGS[league] || league;
 
-      let home;
-      let away;
-      match.teams.forEach((team) => {
-        if (team.isHome) {
-          home = team.shortDisplayName;
-        } else {
-          away = team.shortDisplayName;
-        }
-      });
-      const league = filter[match.league] || match.league;
-      const _match = `${home} vs ${away}`;
-
-      // Extract text between parentheses
-      let location = match.venue.fullName.match(/\((.*?)\)/);
-      if (location && location[1]) {
-        location = location[1];
-      } else {
-        location = match.venue.fullName.slice(0,20);
-      }
-
-      data.push([league, date, time, _match, location]);
-    });
-    console.log(table(data));
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+  return [formattedDate, formattedTime, home, away, formattedLeague];
 }
 
 fetchData();
