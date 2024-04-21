@@ -1,4 +1,5 @@
 {
+  "name": "aquehorajuegaboca-cli",
   "private": true,
   "type": "module",
   "bin": {
